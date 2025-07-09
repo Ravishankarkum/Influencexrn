@@ -24,7 +24,9 @@ app.use('/api/earnings', earningRoutes);
 app.use('/api/brands', brandRoutes);
 app.use('/api/influencers', influencerRoutes);
 app.use('/api/dashboard', dashboardRoutes);
-
+app.get("/", (req, res) => {
+  res.send("API is running ✅");
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
