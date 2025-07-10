@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Brand Owner",
+    "email": "brand@example.com",
+    "password": "password123",
+    "role": "brand"
+  },
+  {
+    "name": "Influencer One",
+    "email": "influencer1@example.com",
+    "password": "password123",
+    "role": "influencer"
+  },
+  {
+    "name": "Influencer Two",
+    "email": "influencer2@example.com",
+    "password": "password123",
+    "role": "influencer"
+  }
+]

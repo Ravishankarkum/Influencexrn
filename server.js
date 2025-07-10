@@ -11,6 +11,10 @@ import influencerRoutes from './routes/influencerRoutes.js';
 
 import userRoutes from './routes/userRoutes.js';
 
+import path from 'path';
+
+
+
 
 dotenv.config();
 connectDB();
@@ -24,6 +28,12 @@ app.use('/api/earnings', earningRoutes);
 app.use('/api/brands', brandRoutes);
 app.use('/api/influencers', influencerRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use(express.json()); 
+app.use(express.urlencoded({ extended: true })); 
+
+
+
+app.use('/uploads', express.static(path.join(path.resolve(), '/uploads')));
 app.get("/", (req, res) => {
   res.send("API is running ✅");
 });

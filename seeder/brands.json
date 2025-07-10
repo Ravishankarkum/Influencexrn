@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Nike",
+    "email": "contact@nike.com",
+    "website": "https://www.nike.com",
+    "industry": "Sportswear"
+  },
+  {
+    "name": "Adidas",
+    "email": "contact@adidas.com",
+    "website": "https://www.adidas.com",
+    "industry": "Sportswear"
+  }
+]
