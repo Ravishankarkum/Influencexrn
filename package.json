@@ -8,8 +8,6 @@
     "dev": "nodemon server.js",
     "seed": "node seeder/seed.js"
   },
-
-
   "keywords": [],
   "author": "",
   "license": "ISC",
