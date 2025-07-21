@@ -6,11 +6,15 @@ import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import brandRoutes from './routes/brandRoutes.js';
 import campaignRoutes from './routes/campaignRoutes.js';
+import chatRoutes from './routes/chatRoutes.js';
 import collaborationRoutes from './routes/collaborationRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
 import earningRoutes from './routes/earningRoutes.js';
 import influencerRoutes from './routes/influencerRoutes.js';
+import passwordResetRoutes from './routes/passwordResetRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+
+
 
 dotenv.config();
 connectDB();
@@ -18,7 +22,7 @@ connectDB();
 const app = express();
 
 app.use(cors({
-   origin: ['http://localhost:3000', 'https://your-frontend.vercel.app'],
+   origin: ['http://localhost:5173', 'https://your-frontend.vercel.app'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 }));
@@ -37,7 +41,8 @@ app.use('/api/influencers', influencerRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 
 app.use('/uploads', express.static(path.join(path.resolve(), '/uploads')));
-
+app.use('/api/password', passwordResetRoutes);
+app.use('/api/chat', chatRoutes);
 app.get("/", (req, res) => {
     res.send("API is running ✅");
 });
