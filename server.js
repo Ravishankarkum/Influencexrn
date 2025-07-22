@@ -17,6 +17,7 @@ import userRoutes from './routes/userRoutes.js';
 
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 import { apiLimiter } from './middleware/rateLimiter.js';
+import adminRoutes from './routes/adminRoutes.js';
 
 dotenv.config();
 connectDB();
@@ -45,6 +46,8 @@ app.use('/api/influencers', influencerRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/password', passwordResetRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is running ✅");

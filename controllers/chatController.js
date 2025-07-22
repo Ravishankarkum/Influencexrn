@@ -1,31 +1,40 @@
 import Chat from '../models/Chat.js';
+import Conversation from '../models/Conversation.js';
 
 export const sendMessage = async (req, res) => {
-  const { conversationId, senderId, text } = req.body;
-  const message = new Chat({ conversationId, senderId, text });
-  await message.save();
-  res.status(201).json(message);
-};
+  try {
+    const senderId = req.user._id;
+    const { receiverId, text } = req.body;
 
-export const getMessages = async (req, res) => {
-  const { conversationId } = req.params;
-  const messages = await Chat.find({ conversationId });
-  res.status(200).json(messages);
-};
+    if (!receiverId || !text) {
+      return res.status(400).json({ message: 'Receiver and text are required' });
+    }
 
-export const getConversationsByUser = async (req, res) => {
-  const userId = req.user._id;
-  const conversations = await Chat.find({ senderId: userId }).distinct('conversationId');
-  res.status(200).json(conversations);
-};
+    // Check if conversation already exists
+    let conversation = await Conversation.findOne({
+      participants: { $all: [senderId, receiverId] }
+    });
 
-export const deleteMessage = async (req, res) => {
-  const { id } = req.params;
-  const message = await Chat.findById(id);
-  if (!message) return res.status(404).json({ message: 'Message not found' });
-  if (message.senderId.toString() !== req.user._id.toString()) {
-    return res.status(403).json({ message: 'Not authorized to delete this message' });
+    if (!conversation) {
+      // Create a new conversation if not found
+      conversation = await Conversation.create({
+        participants: [senderId, receiverId]
+      });
+    }
+
+    // Create a new message
+    const message = await Chat.create({
+      conversationId: conversation._id,
+      senderId,
+      text
+    });
+
+    // Update last message in conversation
+    conversation.lastMessage = message._id;
+    await conversation.save();
+
+    res.status(201).json(message);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-  await message.deleteOne();
-  res.status(200).json({ message: 'Message deleted' });
 };
