@@ -1,11 +1,15 @@
 import mongoose from 'mongoose';
 
 const earningSchema = mongoose.Schema({
-    influencer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    campaign: { type: mongoose.Schema.Types.ObjectId, ref: 'Campaign', required: true },
-    amount: { type: Number, required: true },
-    status: { type: String, enum: ['pending', 'paid'], default: 'pending' },
-    paidAt: { type: Date },
+  influencer_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Influencer', required: true },
+  total_earned: { type: Number, default: 0 },
+  payouts: [
+    {
+      amount: Number,
+      date: Date,
+      method: String
+    }
+  ]
 }, { timestamps: true });
 
 const Earning = mongoose.model('Earning', earningSchema);

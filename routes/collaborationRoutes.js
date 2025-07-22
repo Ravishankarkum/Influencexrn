@@ -4,7 +4,7 @@ import {
     deleteCollaboration,
     getCollaborationById,
     getCollaborations,
-    updateCollaboration,
+    updateCollaboration
 } from '../controllers/collaborationController.js';
 import { protect } from '../middleware/authMiddleware.js';
 

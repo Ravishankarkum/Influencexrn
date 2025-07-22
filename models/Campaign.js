@@ -1,10 +1,15 @@
 import mongoose from 'mongoose';
 
 const campaignSchema = mongoose.Schema({
-    title: { type: String, required: true },
-    description: { type: String },
-    budget: { type: Number },
-    brand: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  brand_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Brand', required: true },
+  campaign_title: { type: String, required: true },
+  description: String,
+  category: String,
+  ended_at: Date,
+  created_at: {
+    type: Date,
+    default: Date.now
+  }
 }, { timestamps: true });
 
 const Campaign = mongoose.model('Campaign', campaignSchema);

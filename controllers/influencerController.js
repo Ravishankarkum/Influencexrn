@@ -8,9 +8,10 @@ export const createInfluencer = async (req, res) => {
     const influencer = new Influencer({
       user: req.user._id,
       bio: req.body.bio,
-      socialLinks: req.body.socialLinks,
-      averageEngagement: req.body.averageEngagement,
-      mediaKit: req.file?.path || null 
+      portfolio_links: req.body.portfolio_links,
+      engagement_rate: req.body.engagement_rate,
+      mediaKit: req.file?.path || null,
+      visibility_tier: req.body.visibility_tier || 'low',
     });
 
     const savedInfluencer = await influencer.save();
@@ -37,8 +38,9 @@ export const updateMyInfluencerProfile = async (req, res) => {
     if (!influencer) return res.status(404).json({ message: 'Profile not found' });
 
     influencer.bio = req.body.bio || influencer.bio;
-    influencer.socialLinks = req.body.socialLinks || influencer.socialLinks;
-    influencer.averageEngagement = req.body.averageEngagement ?? influencer.averageEngagement;
+    influencer.portfolio_links = req.body.portfolio_links || influencer.portfolio_links;
+    influencer.engagement_rate = req.body.engagement_rate ?? influencer.engagement_rate;
+    influencer.visibility_tier = req.body.visibility_tier || influencer.visibility_tier;
     influencer.mediaKit = req.file?.path || influencer.mediaKit;
 
     const updated = await influencer.save();

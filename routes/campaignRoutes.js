@@ -4,16 +4,17 @@ import {
     deleteCampaign,
     getCampaignById,
     getCampaigns,
-    updateCampaign,
+    updateCampaign
 } from '../controllers/campaignController.js';
 import { protect } from '../middleware/authMiddleware.js';
+import { authorizeRoles } from '../middleware/roleMiddleware.js';
 
 const router = express.Router();
 
-router.post('/', protect, createCampaign);
+router.post('/', protect, authorizeRoles('brand'), createCampaign);
 router.get('/', getCampaigns);
 router.get('/:id', getCampaignById);
-router.put('/:id', protect, updateCampaign);
-router.delete('/:id', protect, deleteCampaign);
+router.put('/:id', protect, authorizeRoles('brand', 'admin'), updateCampaign);
+router.delete('/:id', protect, authorizeRoles('brand', 'admin'), deleteCampaign);
 
 export default router;

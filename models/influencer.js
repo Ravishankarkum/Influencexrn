@@ -1,22 +1,25 @@
 import mongoose from 'mongoose';
 
 const influencerSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-    unique: true
-  },
-  
+  username: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  phone: String,
+  city: String,
+  category: String,
+  followers: Number,
+  engagement_rate: Number,
+  portfolio_links: [String],
   bio: String,
-  socialLinks: [String],
-  averageEngagement: Number,
-
-  mediaKit: {
+  visibility_tier: {
     type: String,
-    default: null
+    enum: ['low', 'medium', 'high'],
+    default: 'low'
+  },
+  created_at: {
+    type: Date,
+    default: Date.now
   }
-
 }, { timestamps: true });
 
 const Influencer = mongoose.model('Influencer', influencerSchema);
