@@ -2,8 +2,21 @@ import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
 
 const userSchema = mongoose.Schema({
-  name: { type: String, required: true, trim: true },
-  username: { type: String, required: true, unique: true, trim: true },
+  name: { 
+    type: String, 
+    trim: true,
+    required: function() {
+      return this.role === 'influencer'; // required only for influencer
+    }
+  },
+  username: { 
+    type: String, 
+    unique: true, 
+    trim: true,
+    required: function() {
+      return this.role === 'influencer'; // required only for influencer
+    }
+  },
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
   password: { type: String, required: true, minlength: 6 },
   role: {
