@@ -5,7 +5,8 @@ import {
   getMyInfluencerProfile,
   updateMyInfluencerProfile
 } from '../controllers/influencerController.js';
-import { protect } from '../middleware/authMiddleware.js';
+import protect from '../middleware/authMiddleware.js';
+
 import upload from '../middleware/uploadMiddleware.js';
 import Collaboration from '../models/Collaboration.js';
 

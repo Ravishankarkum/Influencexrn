@@ -6,7 +6,8 @@ import {
     getBrands,
     updateBrand
 } from '../controllers/brandController.js';
-import { protect } from '../middleware/authMiddleware.js';
+
+import protect from '../middleware/authMiddleware.js';
 import { authorizeRoles } from '../middleware/roleMiddleware.js';
 
 const router = express.Router();
