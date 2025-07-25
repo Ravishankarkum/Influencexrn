@@ -83,6 +83,6 @@ export const influencerDashboard = async (req, res) => {
 };
 
 // Rename this to avoid conflict
-export const adminDashboardMessage = (req, res) => {
+export const adminDashboard = (req, res) => {
   res.json({ message: `Welcome Admin, you have access to all dashboards` });
 };
