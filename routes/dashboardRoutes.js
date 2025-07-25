@@ -4,12 +4,14 @@ import {
     influencerDashboard
 } from '../controllers/dashboardController.js';
 import protect from '../middleware/authMiddleware.js';
-
 import { authorizeRoles } from '../middleware/roleMiddleware.js';
 
 const router = express.Router();
 
+// Brand dashboard
 router.get('/brand', protect, authorizeRoles('brand'), brandDashboard);
+
+// Influencer dashboard
 router.get('/influencer', protect, authorizeRoles('influencer'), influencerDashboard);
 
 export default router;

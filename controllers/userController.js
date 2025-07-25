@@ -92,19 +92,21 @@ export const login = async (req, res) => {
 };
 
 // Get Profile
-export const getProfile = (req, res) => {
-    if (!req.user) {
-        return res.status(401).json({ success: false, message: "Not authorized." });
-    }
+export const getProfile = async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ message: "Not authorized" });
+        }
 
-    res.status(200).json({
-        success: true,
-        user: {
+        res.json({
             _id: req.user._id,
             name: req.user.name,
             username: req.user.username,
             email: req.user.email,
-            role: req.user.role
-        }
-    });
+            role: req.user.role // ✅ ensure role is returned
+        });
+    } catch (error) {
+        console.error("Get profile error:", error);
+        res.status(500).json({ message: "Server error while fetching profile" });
+    }
 };

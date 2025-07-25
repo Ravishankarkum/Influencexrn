@@ -4,6 +4,7 @@ import express from 'express';
 import path from 'path';
 import connectDB from './config/db.js';
 
+import adminRoutes from './routes/adminRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import brandRoutes from './routes/brandRoutes.js';
 import campaignRoutes from './routes/campaignRoutes.js';
@@ -17,25 +18,35 @@ import userRoutes from './routes/userRoutes.js';
 
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 import { apiLimiter } from './middleware/rateLimiter.js';
-import adminRoutes from './routes/adminRoutes.js';
 
 dotenv.config();
 connectDB();
 
 const app = express();
 
+// CORS
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://your-frontend.vercel.app'],
+  origin: [
+    'http://localhost:5173',
+    'https://your-deployed-frontend.vercel.app' // replace with your actual deployed frontend URL
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
 
+// Body parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Static file serving
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+
+// Rate limiting
 app.use('/api', apiLimiter);
 
-// Routes
+// =======================
+//        ROUTES
+// =======================
 app.use('/api/users', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/campaigns', campaignRoutes);
@@ -46,16 +57,17 @@ app.use('/api/influencers', influencerRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/password', passwordResetRoutes);
 app.use('/api/chat', chatRoutes);
-app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/admin', adminRoutes);
 
+// Root route
 app.get("/", (req, res) => {
   res.send("API is running ✅");
 });
 
-// 404 & Error handling (keep at end)
+// Error handling
 app.use(notFound);
 app.use(errorHandler);
 
+// Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
