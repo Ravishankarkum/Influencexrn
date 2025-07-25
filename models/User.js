@@ -6,15 +6,23 @@ const userSchema = mongoose.Schema({
     type: String, 
     trim: true,
     required: function() {
-      return this.role === 'influencer'; // required only for influencer
+      return this.role === 'influencer';
     }
   },
   username: { 
     type: String, 
     unique: true, 
     trim: true,
+    sparse: true, // prevents errors if undefined for brands
     required: function() {
-      return this.role === 'influencer'; // required only for influencer
+      return this.role === 'influencer';
+    }
+  },
+  brand_name: { 
+    type: String,
+    trim: true,
+    required: function() {
+      return this.role === 'brand';
     }
   },
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
@@ -25,6 +33,10 @@ const userSchema = mongoose.Schema({
     required: true,
     default: 'influencer'
   },
+  phone: { type: String, trim: true },
+  city: { type: String, trim: true },
+  industry: { type: String, trim: true },
+  website: { type: String, trim: true },
   resetToken: String,
   resetExpire: Date
 }, { timestamps: true });
@@ -38,6 +50,14 @@ userSchema.pre('save', async function (next) {
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
+
+userSchema.methods.toJSON = function () {
+  const userObject = this.toObject();
+  delete userObject.password;
+  delete userObject.resetToken;
+  delete userObject.resetExpire;
+  return userObject;
+};
 
 const User = mongoose.model('User', userSchema);
 export default User;
