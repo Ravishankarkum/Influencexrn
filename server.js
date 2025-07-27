@@ -28,7 +28,7 @@ const app = express();
 app.use(cors({
   origin: [
     'http://localhost:5173',
-    'https://your-deployed-frontend.vercel.app' // replace with your actual deployed frontend URL
+    'https://influencexrnfrontendnew-jg45fi8gw.vercel.app' // replace with your actual deployed frontend URL
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
