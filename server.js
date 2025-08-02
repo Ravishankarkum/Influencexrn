@@ -28,11 +28,12 @@ const app = express();
 app.use(cors({
   origin: [
     'http://localhost:5173',
-    'https://influencexrnfrontendnew-jg45fi8gw.vercel.app' // replace with your actual deployed frontend URL
+    'https://influencexrnfrontendnew.vercel.app'
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
+
 
 // Body parsers
 app.use(express.json());
