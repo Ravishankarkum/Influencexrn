@@ -5,26 +5,18 @@ import {
     influencerDashboard
 } from '../controllers/dashboardController.js';
 import protect from '../middleware/authMiddleware.js';
+import { authorizeRoles } from '../middleware/roleMiddleware.js';
 
 const router = express.Router();
 
-// Unified dashboard route for all roles
-router.get('/', protect, async (req, res) => {
-  try {
-    const role = req.user.role;
-    if (role === 'brand') {
-      return brandDashboard(req, res);
-    }
-    if (role === 'influencer') {
-      return influencerDashboard(req, res);
-    }
-    if (role === 'admin') {
-      return adminDashboard(req, res); // using detailed admin dashboard
-    }
-    return res.status(403).json({ message: 'Access denied.' });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+// Specific routes for brand and influencer dashboards to match frontend expectations
+router.get('/brand', protect, authorizeRoles('brand'), brandDashboard);
+router.get('/influencer', protect, authorizeRoles('influencer'), influencerDashboard);
+router.get('/admin', protect, authorizeRoles('admin'), adminDashboard);
+
+// Analytics route
+router.get('/analytics', protect, (req, res) => {
+    res.json({ message: 'Analytics data would be returned here' });
 });
 
 export default router;

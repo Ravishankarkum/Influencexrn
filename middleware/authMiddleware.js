@@ -13,6 +13,12 @@ const protect = async (req, res, next) => {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             req.user = await User.findById(decoded.id).select('-password');
 
+            console.log("=== AUTH MIDDLEWARE DEBUG INFO ===");
+            console.log("Decoded token:", JSON.stringify(decoded, null, 2));
+            console.log("Found user:", JSON.stringify(req.user, null, 2));
+            console.log("User role:", req.user?.role);
+            console.log("================================");
+
             if (!req.user) {
                 return res.status(401).json({ message: 'Not authorized, user not found' });
             }

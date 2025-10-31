@@ -5,7 +5,7 @@ import path from 'path';
 import connectDB from './config/db.js';
 
 import adminRoutes from './routes/adminRoutes.js';
-import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 import brandRoutes from './routes/brandRoutes.js';
 import campaignRoutes from './routes/campaignRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
@@ -14,7 +14,6 @@ import dashboardRoutes from './routes/dashboardRoutes.js';
 import earningRoutes from './routes/earningRoutes.js';
 import influencerRoutes from './routes/influencerRoutes.js';
 import passwordResetRoutes from './routes/passwordResetRoutes.js';
-import userRoutes from './routes/userRoutes.js';
 
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 import { apiLimiter } from './middleware/rateLimiter.js';
@@ -48,7 +47,6 @@ app.use('/api', apiLimiter);
 // =======================
 //        ROUTES
 // =======================
-app.use('/api/users', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/campaigns', campaignRoutes);
 app.use('/api/collaborations', collaborationRoutes);
