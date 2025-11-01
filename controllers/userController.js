@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
+import generateToken from '../utils/generateToken.js';
 
 // Register
 export const register = async (req, res) => {
@@ -34,12 +35,16 @@ export const register = async (req, res) => {
         const user = await User.create(userData);
 
         if (user) {
+            // Generate token
+            const token = generateToken(user._id, user.role);
+            
             res.status(201).json({
                 _id: user._id,
                 name: user.name,
                 username: user.username,
                 email: user.email,
-                role: user.role
+                role: user.role,
+                token: token
             });
         } else {
             res.status(400).json({ message: 'Invalid user data' });
@@ -96,12 +101,16 @@ export const login = async (req, res) => {
             }
         }
 
+        // Generate token
+        const token = generateToken(user._id, user.role);
+
         res.json({
             _id: user._id,
             name: user.name,
             username: user.username,
             email: user.email,
-            role: user.role
+            role: user.role,
+            token: token
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -120,12 +129,16 @@ export const getProfile = async (req, res) => {
         console.log("Request user object:", JSON.stringify(req.user, null, 2));
         console.log("=========================");
 
+        // Generate a new token to refresh it
+        const token = generateToken(req.user._id, req.user.role);
+
         res.json({
             _id: req.user._id,
             name: req.user.name,
             username: req.user.username,
             email: req.user.email,
-            role: req.user.role
+            role: req.user.role,
+            token: token
         });
     } catch (error) {
         console.error("Get profile error:", error);
