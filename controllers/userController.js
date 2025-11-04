@@ -44,6 +44,7 @@ export const register = async (req, res) => {
                 username: user.username,
                 email: user.email,
                 role: user.role,
+                brand_name: user.brand_name, // Include brand_name for brands
                 token: token
             });
         } else {
@@ -110,6 +111,7 @@ export const login = async (req, res) => {
             username: user.username,
             email: user.email,
             role: user.role,
+            brand_name: user.brand_name, // Include brand_name for brands
             token: token
         });
     } catch (error) {
@@ -138,10 +140,62 @@ export const getProfile = async (req, res) => {
             username: req.user.username,
             email: req.user.email,
             role: req.user.role,
+            brand_name: req.user.brand_name, // Include brand_name for brands
             token: token
         });
     } catch (error) {
         console.error("Get profile error:", error);
         res.status(500).json({ message: "Server error while fetching profile" });
+    }
+};
+
+// Update Password
+export const updatePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        
+        // Get user from req.user (set by auth middleware)
+        const user = await User.findById(req.user._id);
+        
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        
+        // Check if current password is correct
+        if (!(await user.matchPassword(currentPassword))) {
+            return res.status(400).json({ message: 'Current password is incorrect' });
+        }
+        
+        // Validate new password
+        if (!newPassword || newPassword.length < 8) {
+            return res.status(400).json({ message: 'New password must be at least 8 characters long' });
+        }
+        
+        // Update password
+        user.password = newPassword;
+        await user.save();
+        
+        res.json({ message: 'Password updated successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Delete Account
+export const deleteAccount = async (req, res) => {
+    try {
+        // Get user from req.user (set by auth middleware)
+        const user = await User.findById(req.user._id);
+        
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        
+        // Delete user
+        await user.deleteOne();
+        
+        res.json({ message: 'Account deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };

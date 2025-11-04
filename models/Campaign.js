@@ -1,12 +1,18 @@
 import mongoose from 'mongoose';
 
 const campaignSchema = mongoose.Schema({
-  brand_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Brand', required: true },
-  campaign_title: { type: String, required: true },
+  brand: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  title: { type: String, required: true },
   description: String,
+  budget: { type: Number, required: true },
   category: String,
-  ended_at: Date,
-  created_at: {
+  targetMarket: String,
+  status: { 
+    type: String, 
+    enum: ['active', 'completed', 'cancelled'], 
+    default: 'active' 
+  },
+  createdAt: {
     type: Date,
     default: Date.now
   }

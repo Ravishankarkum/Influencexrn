@@ -14,6 +14,7 @@ import dashboardRoutes from './routes/dashboardRoutes.js';
 import earningRoutes from './routes/earningRoutes.js';
 import influencerRoutes from './routes/influencerRoutes.js';
 import passwordResetRoutes from './routes/passwordResetRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
 
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 import { apiLimiter } from './middleware/rateLimiter.js';
@@ -32,7 +33,6 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
-
 
 // Body parsers
 app.use(express.json());
@@ -57,6 +57,7 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/password', passwordResetRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Root route
 app.get("/", (req, res) => {
