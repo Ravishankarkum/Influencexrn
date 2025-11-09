@@ -1,6 +1,7 @@
 // controllers/chatController.js
 import Chat from '../models/Chat.js';
 import Conversation from '../models/Conversation.js';
+import User from '../models/User.js';
 
 export const sendMessage = async (req, res) => {
   try {
@@ -74,5 +75,60 @@ export const deleteMessage = async (req, res) => {
     res.status(200).json({ message: 'Message deleted' });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+// Send help message to admin
+export const sendHelpMessage = async (req, res) => {
+  try {
+    const senderId = req.user._id;
+    const { message: messageText, subject } = req.body;
+
+    if (!messageText) {
+      return res.status(400).json({ message: 'Message is required' });
+    }
+
+    // Find admin user
+    const admin = await User.findOne({ role: 'admin' });
+    if (!admin) {
+      return res.status(404).json({ message: 'Admin user not found' });
+    }
+
+    const receiverId = admin._id;
+
+    // Create a formatted message with subject if provided
+    const formattedMessage = subject 
+      ? `[HELP REQUEST: ${subject}]\n\n${messageText}` 
+      : `[HELP REQUEST]\n\n${messageText}`;
+
+    // Find or create conversation with admin
+    let conversation = await Conversation.findOne({
+      participants: { $all: [senderId, receiverId] }
+    });
+
+    if (!conversation) {
+      conversation = await Conversation.create({
+        participants: [senderId, receiverId]
+      });
+    }
+
+    // Create the help message
+    const message = await Chat.create({
+      conversationId: conversation._id,
+      senderId,
+      text: formattedMessage
+    });
+
+    conversation.lastMessage = message._id;
+    await conversation.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Help message sent successfully',
+      data: message
+    });
+  } catch (error) {
+    console.error('Send Help Message Error:', error);
+    res.status(500).json({ message: error.message });
   }
 };
