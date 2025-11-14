@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import path from 'path';
 import connectDB from './config/db.js';
+import googleAuthRoutes from "./routes/authRoutes.js";
 
 import adminRoutes from './routes/adminRoutes.js';
 import userRoutes from './routes/userRoutes.js';
@@ -18,6 +19,14 @@ import notificationRoutes from './routes/notificationRoutes.js';
 
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 import { apiLimiter } from './middleware/rateLimiter.js';
+import "./config/passport.js";
+import passport from "passport";
+import session from "express-session";
+
+
+
+
+
 
 dotenv.config();
 connectDB();
@@ -58,6 +67,15 @@ app.use('/api/password', passwordResetRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use(session({
+  secret: "secret_key",
+  resave: false,
+  saveUninitialized: true
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+app.use("/auth", googleAuthRoutes);
 
 // Root route
 app.get("/", (req, res) => {
