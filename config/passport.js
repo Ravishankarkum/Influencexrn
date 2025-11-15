@@ -10,6 +10,7 @@ passport.use(
       callbackURL: process.env.GOOGLE_REDIRECT_URL,
     },
     async (accessToken, refreshToken, profile, done) => {
+
       const email = profile.emails[0].value;
 
       let user = await User.findOne({ email });
@@ -17,7 +18,7 @@ passport.use(
       if (!user) {
         user = await User.create({
           name: profile.displayName,
-          email: email,
+          email,
           password: "google-auth",
           provider: "google",
         });
@@ -27,5 +28,3 @@ passport.use(
     }
   )
 );
-
-export default passport;
