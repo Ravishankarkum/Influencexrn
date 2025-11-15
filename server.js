@@ -2,14 +2,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import path from 'path';
-import cookieParser from "cookie-parser";
-import session from "express-session";
-import passport from "passport";
-
 import connectDB from './config/db.js';
-import "./config/passport.js";   // MUST COME BEFORE ROUTES
-
-import googleAuthRoutes from "./routes/authRoutes.js";
 
 import adminRoutes from './routes/adminRoutes.js';
 import userRoutes from './routes/userRoutes.js';
@@ -23,59 +16,58 @@ import influencerRoutes from './routes/influencerRoutes.js';
 import passwordResetRoutes from './routes/passwordResetRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 
+import googleAuthRoutes from "./routes/authRoutes.js";
+
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 import { apiLimiter } from './middleware/rateLimiter.js';
+import session from "express-session";
+import passport from "passport";
+import "./config/passport.js";
 
 dotenv.config();
 connectDB();
 
 const app = express();
 
+// Enable trust proxy for Render
+app.set("trust proxy", 1);
+
 // CORS
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https://influencexrnfrontendnew.vercel.app",
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://influencexrnfrontendnew.vercel.app'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 
 // Body parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Cookie parser (REQUIRED)
-app.use(cookieParser());
+// Sessions MUST come before passport + routes
+app.use(session({
+  secret: "secret_key",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false,       // important for Render (free HTTPS)
+    httpOnly: true,
+    sameSite: "lax"
+  }
+}));
 
-// ---- SESSION MUST COME BEFORE PASSPORT ----
-app.use(
-  session({
-    secret: process.env.JWT_SECRET || "secret_key",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: false, // Render auto handles https
-      httpOnly: true,
-    },
-  })
-);
-
-// ---- PASSPORT MUST COME AFTER SESSION ----
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Static file serving
+// Static files
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Rate limiting
 app.use('/api', apiLimiter);
 
-// ---- ROUTES MUST COME AFTER PASSPORT ----
-app.use("/auth", googleAuthRoutes);
-
+// Routes
 app.use('/api/users', userRoutes);
 app.use('/api/campaigns', campaignRoutes);
 app.use('/api/collaborations', collaborationRoutes);
@@ -88,15 +80,17 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/notifications', notificationRoutes);
 
-// Root
+// Google Auth Routes
+app.use("/auth", googleAuthRoutes);
+
+// Root route
 app.get("/", (req, res) => {
   res.send("API is running ✅");
 });
 
-// Error middleware
+// Error handling
 app.use(notFound);
 app.use(errorHandler);
 
-// Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
