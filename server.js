@@ -20,7 +20,7 @@ import googleAuthRoutes from "./routes/authRoutes.js";
 
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 import { apiLimiter } from './middleware/rateLimiter.js';
-import session from "express-session";
+
 import passport from "passport";
 import "./config/passport.js";
 
@@ -29,42 +29,29 @@ connectDB();
 
 const app = express();
 
-// Enable trust proxy for Render
+// TRUST RENDER PROXY
 app.set("trust proxy", 1);
 
 // CORS
 app.use(cors({
   origin: [
-    'http://localhost:5173',
-    'https://influencexrnfrontendnew.vercel.app'
+    "http://localhost:5173",
+    "https://influencexrnfrontendnew.vercel.app",
   ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
+  credentials: true,
 }));
 
 // Body parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Sessions MUST come before passport + routes
-app.use(session({
-  secret: "secret_key",
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: false,       // important for Render (free HTTPS)
-    httpOnly: true,
-    sameSite: "lax"
-  }
-}));
-
+// NO SESSION NEEDED (we use JWT)
 app.use(passport.initialize());
-app.use(passport.session());
 
-// Static files
+// Static uploads
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
-// Rate limiting
+// Rate limit
 app.use('/api', apiLimiter);
 
 // Routes
@@ -80,15 +67,15 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/notifications', notificationRoutes);
 
-// Google Auth Routes
+// GOOGLE AUTH
 app.use("/auth", googleAuthRoutes);
 
-// Root route
+// ROOT ROUTE
 app.get("/", (req, res) => {
   res.send("API is running ✅");
 });
 
-// Error handling
+// Error handlers
 app.use(notFound);
 app.use(errorHandler);
 
