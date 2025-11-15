@@ -4,22 +4,22 @@ import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
-// Step 1 – Google login
+// Step 1 – Google login redirect
 router.get(
   "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
+  passport.authenticate("google", {
+    scope: ["profile", "email"]
+  })
 );
 
-// Step 2 – Google callback
+// Step 2 – Google Callback
 router.get(
   "/google/callback",
   passport.authenticate("google", { session: false }),
   (req, res) => {
-    const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET);
 
-    // Redirect back to frontend with JWT
+    // Redirect user back to deployed frontend WITH TOKEN
     res.redirect(
       `https://influencexrnfrontendnew.vercel.app/google-success?token=${token}`
     );
