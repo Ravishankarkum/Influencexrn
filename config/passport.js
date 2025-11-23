@@ -19,11 +19,15 @@ passport.use(
 
         let user = await User.findOne({ email });
 
+        // If user does not exist -> create one
         if (!user) {
           user = await User.create({
             name: profile.displayName,
             email,
-            password: null,             // ⬅ better than "google-auth"
+            username: profile.displayName.replace(/\s+/g, "").toLowerCase(),
+            phone: "N/A",
+            city: "N/A",
+            password: "google-auth", // use fixed fallback (NOT null)
             provider: "google",
             avatar: profile.photos?.[0]?.value || null,
           });
@@ -38,7 +42,7 @@ passport.use(
   )
 );
 
-// Needed only if you use sessions
+// Needed only if using sessions (harmless otherwise)
 passport.serializeUser((user, done) => {
   done(null, user._id);
 });
