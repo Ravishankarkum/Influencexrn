@@ -4,53 +4,66 @@ import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
-// GOOGLE LOGIN - STEP 1
+// ---------------------------------------------
+// STEP 1 — GOOGLE LOGIN
+// ---------------------------------------------
 router.get(
   "/google",
   passport.authenticate("google", {
     scope: ["profile", "email"],
-    prompt: "select_account"
+    prompt: "select_account",
+    session: false
   })
 );
 
-// GOOGLE CALLBACK - STEP 2
+// ---------------------------------------------
+// STEP 2 — GOOGLE CALLBACK
+// ---------------------------------------------
 router.get(
   "/google/callback",
-  passport.authenticate("google", { session: false, failureRedirect: "/auth/failure" }),
+  passport.authenticate("google", {
+    session: false,
+    failureRedirect: "/auth/failure"
+  }),
   (req, res) => {
     try {
       if (!req.user) {
         return res.redirect(
-          "https://influencexrnfrontendnew.vercel.app/login?error=NoUser"
+          `${process.env.FRONTEND_URL}/login?error=NoUser`
         );
       }
 
-      // Create JWT
+      // Generate JWT
       const token = jwt.sign(
         { id: req.user._id },
         process.env.JWT_SECRET,
         { expiresIn: "7d" }
       );
 
-      // URL safe token
       const encodedToken = encodeURIComponent(token);
 
-      // Redirect to frontend with token
-      res.redirect(
-        `https://influencexrnfrontendnew.vercel.app/google-success?token=${encodedToken}`
+      // Redirect back to frontend with JWT token
+      return res.redirect(
+        `${process.env.FRONTEND_URL}/google-success?token=${encodedToken}`
       );
+
     } catch (error) {
       console.error("Google Auth Error:", error);
-      res.redirect(
-        "https://influencexrnfrontendnew.vercel.app/login?error=AuthFailed"
+      return res.redirect(
+        `${process.env.FRONTEND_URL}/login?error=AuthFailed`
       );
     }
   }
 );
 
-// FAILURE ROUTE (optional)
+// ---------------------------------------------
+// OPTIONAL FAILURE ROUTE
+// ---------------------------------------------
 router.get("/failure", (req, res) => {
-  res.send("Google Authentication Failed ❌");
+  res.status(400).json({
+    success: false,
+    message: "Google Authentication Failed ❌"
+  });
 });
 
 export default router;
