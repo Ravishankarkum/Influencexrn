@@ -37,7 +37,7 @@ app.use(cors({
   origin: [
     "http://localhost:5173",
     "https://influencexrnfrontendnew.vercel.app",
-    "https://influencexrnfrontendnew.vercel.app/google-success",
+    
   ],
   credentials: true,
 }));
