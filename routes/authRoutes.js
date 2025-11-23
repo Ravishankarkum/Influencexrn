@@ -4,26 +4,53 @@ import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
-// Step 1 – Google login redirect
+// GOOGLE LOGIN - STEP 1
 router.get(
   "/google",
   passport.authenticate("google", {
-    scope: ["profile", "email"]
+    scope: ["profile", "email"],
+    prompt: "select_account"
   })
 );
 
-// Step 2 – Google Callback
+// GOOGLE CALLBACK - STEP 2
 router.get(
   "/google/callback",
-  passport.authenticate("google", { session: false }),
+  passport.authenticate("google", { session: false, failureRedirect: "/auth/failure" }),
   (req, res) => {
-    const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET);
+    try {
+      if (!req.user) {
+        return res.redirect(
+          "https://influencexrnfrontendnew.vercel.app/login?error=NoUser"
+        );
+      }
 
-    // Redirect user back to deployed frontend WITH TOKEN
-    res.redirect(
-      `https://influencexrnfrontendnew.vercel.app/google-success?token=${token}`
-    );
+      // Create JWT
+      const token = jwt.sign(
+        { id: req.user._id },
+        process.env.JWT_SECRET,
+        { expiresIn: "7d" }
+      );
+
+      // URL safe token
+      const encodedToken = encodeURIComponent(token);
+
+      // Redirect to frontend with token
+      res.redirect(
+        `https://influencexrnfrontendnew.vercel.app/google-success?token=${encodedToken}`
+      );
+    } catch (error) {
+      console.error("Google Auth Error:", error);
+      res.redirect(
+        "https://influencexrnfrontendnew.vercel.app/login?error=AuthFailed"
+      );
+    }
   }
 );
+
+// FAILURE ROUTE (optional)
+router.get("/failure", (req, res) => {
+  res.send("Google Authentication Failed ❌");
+});
 
 export default router;
