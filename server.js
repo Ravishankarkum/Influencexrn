@@ -29,10 +29,10 @@ connectDB();
 
 const app = express();
 
-// TRUST RENDER PROXY
+// Trust Render proxy
 app.set("trust proxy", 1);
 
-// CORS
+// CORS (Frontend URLs)
 app.use(cors({
   origin: [
     "http://localhost:5173",
@@ -45,16 +45,16 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// NO SESSION NEEDED (we use JWT)
+// Passport (no session, JWT only)
 app.use(passport.initialize());
 
 // Static uploads
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
-// Rate limit
+// Rate limiter
 app.use('/api', apiLimiter);
 
-// Routes
+// API Routes
 app.use('/api/users', userRoutes);
 app.use('/api/campaigns', campaignRoutes);
 app.use('/api/collaborations', collaborationRoutes);
@@ -67,12 +67,17 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/notifications', notificationRoutes);
 
-// GOOGLE AUTH
+// Google Auth Routes
 app.use("/auth", googleAuthRoutes);
 
-// ROOT ROUTE
+// Root route (also warms server)
 app.get("/", (req, res) => {
-  res.send("API is running ✅");
+  res.send("API is running and awake 🟢");
+});
+
+// "Warm-up" endpoint to prevent Render cold-start OAuth failure
+app.get("/warmup", (req, res) => {
+  res.json({ status: "warmed" });
 });
 
 // Error handlers
