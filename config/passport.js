@@ -27,7 +27,8 @@ passport.use(
             username: profile.displayName.replace(/\s+/g, "").toLowerCase(),
             phone: "N/A",
             city: "N/A",
-            password: "google-auth", // use fixed fallback (NOT null)
+            googleId: profile.id,             // <-- Important
+            password: "GoogleAuth123",        // <-- VALID dummy password
             provider: "google",
             avatar: profile.photos?.[0]?.value || null,
           });
@@ -42,7 +43,7 @@ passport.use(
   )
 );
 
-// Needed only if using sessions (harmless otherwise)
+// sessions
 passport.serializeUser((user, done) => {
   done(null, user._id);
 });
