@@ -18,9 +18,7 @@ const userSchema = mongoose.Schema(
     name: {
       type: String,
       trim: true,
-      required: function () {
-        return true;
-      },
+      required: true,
       minlength: [2, 'Name must be at least 2 characters long'],
     },
 
@@ -63,14 +61,15 @@ const userSchema = mongoose.Schema(
     password: {
       type: String,
       required: function () {
-        return !this.googleId;  // ⬅ Google users skip password requirement
+        return !this.googleId;
       },
       validate: {
         validator: function (password) {
-          if (!password || this.googleId) return true; // Skip check for Google users
+          if (!password || this.googleId) return true;
           return validatePassword(password);
         },
-        message: 'Password must be at least 8 characters with uppercase, lowercase, and number',
+        message:
+          'Password must be at least 8 characters with uppercase, lowercase, and number',
       },
     },
 
@@ -82,15 +81,15 @@ const userSchema = mongoose.Schema(
     role: {
       type: String,
       enum: ['brand', 'influencer', 'admin'],
-      required: true,
       default: 'influencer',
+      required: true,
     },
 
     phone: {
       type: String,
       trim: true,
       required: function () {
-        return !this.googleId; // ⬅ Skip for Google users
+        return !this.googleId;
       },
     },
 
@@ -98,7 +97,7 @@ const userSchema = mongoose.Schema(
       type: String,
       trim: true,
       required: function () {
-        return !this.googleId; // ⬅ Skip for Google users
+        return !this.googleId;
       },
       minlength: [2, 'City must be at least 2 characters long'],
     },
@@ -115,7 +114,7 @@ const userSchema = mongoose.Schema(
       type: String,
       trim: true,
       match: [
-        /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/,
+        /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/,
         'Please enter a valid URL',
       ],
     },
@@ -130,16 +129,20 @@ const userSchema = mongoose.Schema(
   }
 );
 
+// Compare passwords
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
+// Hash password (skip if Google user)
 userSchema.pre('save', async function (next) {
-  if (!this.isModified('password') || this.googleId) return next(); // ⬅ Skip hashing for Google users
+  if (!this.isModified('password') || this.googleId) return next();
 
   if (!validatePassword(this.password)) {
     return next(
-      new Error('Password must be at least 8 characters with uppercase, lowercase, and number')
+      new Error(
+        'Password must be at least 8 characters with uppercase, lowercase, and number'
+      )
     );
   }
 
@@ -148,6 +151,7 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
+// Hide password fields from output
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;
