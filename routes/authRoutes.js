@@ -1,6 +1,7 @@
 import express from "express";
 import passport from "passport";
 import jwt from "jsonwebtoken";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -42,11 +43,9 @@ router.get(
 
       const encodedToken = encodeURIComponent(token);
 
-      // Redirect back to frontend with JWT token
       return res.redirect(
         `${process.env.FRONTEND_URL}/google-success?token=${encodedToken}`
       );
-
     } catch (error) {
       console.error("Google Auth Error:", error);
       return res.redirect(
@@ -55,6 +54,13 @@ router.get(
     }
   }
 );
+
+// ------------------------------------------------
+// ADD THIS → CURRENT LOGGED-IN USER CHECK
+// ------------------------------------------------
+router.get("/me", authMiddleware, async (req, res) => {
+  res.json({ user: req.user });
+});
 
 // ---------------------------------------------
 // OPTIONAL FAILURE ROUTE
