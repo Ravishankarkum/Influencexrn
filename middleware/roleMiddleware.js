@@ -1,3 +1,5 @@
+// middleware for authorize roles
+
 export const authorizeRoles = (...allowedRoles) => {
   return (req, res, next) => {
     if (!req.user || !allowedRoles.includes(req.user.role)) {
