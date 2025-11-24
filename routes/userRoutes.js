@@ -9,7 +9,7 @@ import {
 } from '../middleware/validationMiddleware.js';
 
 const router = express.Router();
-
+// user routes
 router.post('/register', registerValidationRules(), validateRegistration, register);
 router.post('/login', loginValidationRules(), validate, login);
 router.get('/profile', protect, getProfile);
