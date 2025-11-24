@@ -13,7 +13,7 @@ import protect from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// Help route must come before /:conversationId to avoid route conflicts
+// Help route must come before /:conversationId to avoid route conflicts  ()
 router.post('/help', protect, sendHelpMessage);
 router.get('/conversations/user', protect, getConversationsByUser);
 router.post('/', protect, sendMessage);
