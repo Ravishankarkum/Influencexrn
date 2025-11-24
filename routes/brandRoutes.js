@@ -18,4 +18,4 @@ router.get('/:id', getBrandById);
 router.put('/:id', protect, authorizeRoles('brand', 'admin'), updateBrand);
 router.delete('/:id', protect, authorizeRoles('brand', 'admin'), deleteBrand);
 
-export default router;
+export default router;   //
