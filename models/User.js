@@ -1,13 +1,14 @@
 import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
 
-// Email validation
+// Email validation function using regex
 function validateEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
 
-// Password validation
+// Password validation function using regex
+// Must contain uppercase, lowercase, number, and be at least 8 chars
 function validatePassword(password) {
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
   return passwordRegex.test(password);
@@ -15,6 +16,7 @@ function validatePassword(password) {
 
 const userSchema = mongoose.Schema(
   {
+    // Full name of the user
     name: {
       type: String,
       trim: true,
@@ -22,6 +24,7 @@ const userSchema = mongoose.Schema(
       minlength: [2, 'Name must be at least 2 characters long'],
     },
 
+    // Username only required for influencers who are NOT Google users
     username: {
       type: String,
       unique: true,
@@ -34,6 +37,7 @@ const userSchema = mongoose.Schema(
       match: [/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'],
     },
 
+    // Brand name required only if role is "brand" and not logged in via Google
     brand_name: {
       type: String,
       trim: true,
@@ -43,6 +47,7 @@ const userSchema = mongoose.Schema(
       minlength: [2, 'Brand name must be at least 2 characters long'],
     },
 
+    // User’s email, must belong to Gmail or GLA domain
     email: {
       type: String,
       required: true,
@@ -58,6 +63,7 @@ const userSchema = mongoose.Schema(
       },
     },
 
+    // Password required only for non-Google users
     password: {
       type: String,
       required: function () {
@@ -65,7 +71,7 @@ const userSchema = mongoose.Schema(
       },
       validate: {
         validator: function (password) {
-          if (!password || this.googleId) return true;
+          if (!password || this.googleId) return true; // Skip validation for Google users
           return validatePassword(password);
         },
         message:
@@ -73,11 +79,13 @@ const userSchema = mongoose.Schema(
       },
     },
 
+    // Google authentication ID (if logged in via Google)
     googleId: {
       type: String,
       required: false,
     },
 
+    // User role (influencer, brand, or admin)
     role: {
       type: String,
       enum: ['brand', 'influencer', 'admin'],
@@ -85,6 +93,7 @@ const userSchema = mongoose.Schema(
       required: true,
     },
 
+    // Phone number required for non-Google users
     phone: {
       type: String,
       trim: true,
@@ -93,6 +102,7 @@ const userSchema = mongoose.Schema(
       },
     },
 
+    // City required for non-Google users
     city: {
       type: String,
       trim: true,
@@ -102,6 +112,7 @@ const userSchema = mongoose.Schema(
       minlength: [2, 'City must be at least 2 characters long'],
     },
 
+    // Industry field required only for brands
     industry: {
       type: String,
       trim: true,
@@ -110,6 +121,7 @@ const userSchema = mongoose.Schema(
       },
     },
 
+    // Optional website URL validation
     website: {
       type: String,
       trim: true,
@@ -119,22 +131,23 @@ const userSchema = mongoose.Schema(
       ],
     },
 
+    // Password reset token and expiry for forget password feature
     resetToken: String,
     resetExpire: Date,
   },
   {
-    timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
+    timestamps: true,             // Adds createdAt & updatedAt automatically
+    toJSON: { virtuals: true },   // Include virtual fields in JSON output
+    toObject: { virtuals: true }, // Include virtuals in object output
   }
 );
 
-// Compare passwords
+// Method to compare entered password with hashed password
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// Hash password (skip if Google user)
+// Pre-save middleware: hash password before saving (except Google users)
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password') || this.googleId) return next();
 
@@ -146,12 +159,12 @@ userSchema.pre('save', async function (next) {
     );
   }
 
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+  const salt = await bcrypt.genSalt(10);   // Generate salt
+  this.password = await bcrypt.hash(this.password, salt); // Hash password
   next();
 });
 
-// Hide password fields from output
+// Hide sensitive fields when sending response
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;
@@ -160,7 +173,9 @@ userSchema.methods.toJSON = function () {
   return obj;
 };
 
+// Index on role for faster queries
 userSchema.index({ role: 1 });
 
+// Creating and exporting User model
 const User = mongoose.model('User', userSchema);
 export default User;
