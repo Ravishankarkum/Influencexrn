@@ -69,4 +69,4 @@ const importData = async () => {
 };
 
 // Run the seeding function
-importData();
+importData();//
