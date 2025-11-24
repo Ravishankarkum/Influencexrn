@@ -11,4 +11,4 @@ router.get('/', protect, authorizeRoles('admin'), adminDashboard);
 // Simple message for admin dashboard
 router.get('/message', protect, authorizeRoles('admin'), adminDashboard);
 
-export default router;
+export default router;//
