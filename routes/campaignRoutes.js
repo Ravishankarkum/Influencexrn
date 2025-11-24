@@ -19,3 +19,5 @@ router.put('/:id', protect, authorizeRoles('brand', 'admin'), updateCampaign);
 router.delete('/:id', protect, authorizeRoles('brand', 'admin'), deleteCampaign);
 
 export default router;
+
+//Campaigns routes file uploaded
