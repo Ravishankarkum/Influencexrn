@@ -1,14 +1,28 @@
 [
   {
+    // Brand name
     "name": "Nike",
+
+    // Official brand email
     "email": "contact@nike.com",
+
+    // Brand website URL
     "website": "https://www.nike.com",
+
+    // Industry/category of the brand
     "industry": "Sportswear"
   },
   {
+    // Brand name
     "name": "Adidas",
+
+    // Official brand email
     "email": "contact@adidas.com",
+
+    // Brand website URL
     "website": "https://www.adidas.com",
+
+    // Industry/category of the brand
     "industry": "Sportswear"
   }
 ]
