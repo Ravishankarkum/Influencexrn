@@ -11,7 +11,7 @@ import protect from '../middleware/authMiddleware.js';
 import { authorizeRoles } from '../middleware/roleMiddleware.js';
 
 const router = express.Router();
-
+//router for authorize roles
 router.post('/', protect, authorizeRoles('brand', 'admin'), createBrand);
 router.get('/', getBrands);
 router.get('/:id', getBrandById);
