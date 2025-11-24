@@ -9,7 +9,7 @@ import { authorizeRoles } from '../middleware/roleMiddleware.js';
 
 const router = express.Router();
 
-// Specific routes for brand and influencer dashboards to match frontend expectations
+// Specific routes for brand and influencer dashboards to match frontend expectations //
 router.get('/brand', protect, authorizeRoles('brand'), brandDashboard);
 router.get('/influencer', protect, authorizeRoles('influencer'), influencerDashboard);
 router.get('/admin', protect, authorizeRoles('admin'), adminDashboard);
