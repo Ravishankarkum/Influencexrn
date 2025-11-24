@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-// Schema for storing brand details
+
 const brandSchema = new mongoose.Schema({
 
   // Name of the brand (required field)
@@ -38,3 +38,4 @@ const brandSchema = new mongoose.Schema({
 // Creating and exporting the Brand model
 const Brand = mongoose.model('Brand', brandSchema);
 export default Brand;
+//file completed
