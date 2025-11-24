@@ -1,8 +1,10 @@
 [
   {
+    // Message sent by influencer or brand
     "message": "Interested in collaborating on the summer fitness campaign"
   },
   {
+    // Another message related to campaign collaboration
     "message": "Ready to promote the back-to-school campaign"
   }
 ]
