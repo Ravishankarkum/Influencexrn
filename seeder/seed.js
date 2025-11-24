@@ -10,7 +10,7 @@ import User from '../models/User.js';
 
 dotenv.config();
 
-// Connect to MongoDB using environment variable
+// Connect to MongoDB using environment variables
 await mongoose.connect(process.env.MONGO_URI);
 console.log('MongoDB connected');
 
