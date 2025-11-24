@@ -1,6 +1,11 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
+
+
+
+// this is a middleware for token verification 
+
 const protect = async (req, res, next) => {
     let token;
 
