@@ -1,3 +1,8 @@
+// USER ROUTES
+// This file handles all routes related to user authentication,
+// profile management, updating passwords, and deleting accounts.
+// Each route uses proper validation and authentication middleware.
+
 import express from 'express';
 import { getProfile, login, register, updatePassword, deleteAccount } from '../controllers/userController.js';
 import protect from '../middleware/authMiddleware.js';
